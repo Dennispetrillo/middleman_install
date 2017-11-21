@@ -20,22 +20,31 @@ template '/etc/apache2/sites-enabled/blog.conf' do
   source 'blog.erb'
 end
 
+file '/etc/apache2/sites-enabled/000-default.conf' do
+  action :delete
+end
 
+service 'apache2' do
+  action :restart
+end
 
-#Install Ruby
-#apt_package 'build-essential'
-#apt_package 'libssl-dev'
-#apt_package 'libyaml-dev'
-#apt_package 'libreadline-dev'
-#apt_package 'openssl'
-#apt_package 'curl'
-#apt_package 'git-core'
-#apt_package 'zlib1g-dev'
-#apt_package 'bison'
-#apt_package 'libxml2-dev'
-#apt_package 'libxslt1-dev'
-#apt_package 'libcurl4-openssl-dev'
-#apt_package 'nodejs'
-#apt_package 'libsqlite3-dev'
-#apt_package 'sqlite3'
+apt_package 'git'
 
+git "git_repo" do
+  repository 'https://github.com/learnchef/middleman-blog.git'
+  action :sync
+  destination '/middleman_blog'
+end
+
+gem_package 'bundler'
+
+user 'bundle_user' do
+  shell '/bin/bash'
+  home '/home/bundle_user'
+end
+
+execute 'bundle_install' do
+  command 'bundle install'
+  user 'bundle_user'
+  cwd '/var/lib/gems/2.3.0/cache'
+end
