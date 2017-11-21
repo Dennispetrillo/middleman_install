@@ -16,6 +16,12 @@ execute 'rewrite' do
   command 'a2enmod rewrite'
 end
 
+template '/etc/apache2/sites-enabled/blog.conf' do
+  source 'blog.erb'
+end
+
+
+
 #Install Ruby
 #apt_package 'build-essential'
 #apt_package 'libssl-dev'
